@@ -1,0 +1,61 @@
+.forma-label {
+    color:red;
+    font-size: 29px;
+    font-weight: inherit;
+    margin-left: 95px;
+}
+
+.sorts {
+    color:red;
+    font-size: 19px;
+    padding: 8px;
+}
+
+.sorts:hover {
+    cursor: pointer;
+    color:mediumpurple;
+    transform: translateY(-2px);
+}
+
+.formach {
+    margin-top:20px;
+    border: 2px solid aquamarine;
+    border-radius: 15px;
+    height: auto;
+}
+
+.options {
+
+    margin-left: 55px;
+    display: flex;
+    margin-top: 20px;
+
+}
+
+.from {
+    color:red;
+    font-size: 25px;
+    font-family: "56th Street" sens;
+    padding: 3px ;
+}
+
+.res {
+    color:black;
+    font-size: 25px;
+    font-family: "56th Street" sens;
+}
+
+.options-enter {
+    opacity: 0;
+}
+.options-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+.options-exit {
+    opacity: 1;
+}
+.options-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
