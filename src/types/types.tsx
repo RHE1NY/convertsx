@@ -13,6 +13,6 @@ export interface ICash {
 export interface IHistory {
     fromCurrency: string,
     toCurrency: string,
-    fromCash: string,
+    fromCash: number,
     toCash: number
 }

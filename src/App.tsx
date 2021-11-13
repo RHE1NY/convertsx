@@ -2,28 +2,31 @@ import React, {useEffect, useState} from 'react';
 import {ICash, IData, IHistory} from "./types/types";
 import axios from "axios";
 import CurrencySelector from "./components/currencySelector/currencySelector";
-import ConvertorForm from "./components/ConvertorForm/convertorForm";
 import './main.scss'
 import Loader from "./components/loader/loader";
-import set = Reflect.set;
+import {useDispatch, useSelector} from "react-redux";
+import {getCurrencies, getHistory} from "./store/selectors/converterSelectors";
+import {getAllCurrencies, setNewHistoryItem} from "./store/actions/converterActions";
 
 function App() {
-    const [currencies, setCurrencies] = useState<string[]>([]);
+    const currencies: string[] = useSelector(getCurrencies)
     const [fromCurrency, setFromCurrency] = useState<string>('');
     const [toCurrency, setToCurrency] = useState<string>('');
-    const [cashBeforeConvert, setCashBeforeConvert] = useState<string>('');
+    const [cashBeforeConvert, setCashBeforeConvert] = useState<number>(1);
     const [cashAfterConvert, setCashAfterConvert] = useState<number>(0);
     const [loader, setLoader] = useState<boolean>(false);
-    const [historyOps, setHistoryOps] = useState<IHistory[]>([]);
+    const historyOps: IHistory[] = useSelector(getHistory);
+    const dispatch = useDispatch();
 
-    async function fetchValues() {
-        try {
-          const response =  await axios.get<IData>(`http://api.exchangeratesapi.io/v1/latest?access_key=8c96993af73a5fadaa9832458d1235a9`)
-                setCurrencies(Object.keys(response.data.rates))
-
-        } catch (e) {
-            console.log(e);
+    useEffect(() => {
+        if (currencies.length) {
+            setFromCurrency(currencies[0])
+            setToCurrency(currencies[1])
         }
+    }, [currencies])
+
+    function fetchValues() {
+        dispatch(getAllCurrencies())
     }
         async function convertCurrency() {
             setLoader(true);
@@ -34,14 +37,13 @@ function App() {
             }).then(res => {
                 res.data.amount && setCashAfterConvert(res.data.amount)
                 setLoader(false);
+                dispatch(setNewHistoryItem({
+                    fromCurrency: fromCurrency,
+                    fromCash: cashBeforeConvert,
+                    toCurrency: toCurrency,
+                    toCash: res.data.amount
+                }))
             })
-            setHistoryOps([{
-                fromCurrency: fromCurrency,
-                fromCash: cashBeforeConvert,
-                toCurrency: toCurrency,
-                toCash: cashAfterConvert
-            }, ...historyOps])
-
         }
 
 
@@ -58,7 +60,7 @@ useEffect( ()=> {
                     <input type="number"
                            id={'from-currency'}
                            value={cashBeforeConvert}
-                           onChange={(e) => setCashBeforeConvert(e.target.value)}
+                           onChange={(e) => setCashBeforeConvert(Number(e.target.value))}
                            placeholder="Введите значение"
                     />
       <CurrencySelector
